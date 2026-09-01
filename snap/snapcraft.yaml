@@ -52,6 +52,8 @@ apps:
       - avahi-observe
       - x11
       - wayland
+      - system-observe
+      - alsa
 
 parts:
   desktop-app:
