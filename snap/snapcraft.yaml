@@ -1,0 +1,127 @@
+title: Music Assistant Desktop
+name: music-assistant-desktop
+contact: d@nbishop.uk
+license: Apache-2.0
+website: https://www.music-assistant.io/companion-app/
+base: core24
+adopt-info: desktop-app
+summary: Official companion desktop app for Music Assistant
+description: |
+  Music Assistant is a media library manager connecting your streaming
+  services and connected speakers. This desktop companion app provides native
+  playback (Sendspin), media controls, Discord Rich Presence, and server discovery.
+
+grade: stable
+confinement: strict
+
+platforms:
+  amd64:
+  arm64:
+
+layout:
+  /usr/share/alsa:
+    bind: $SNAP/usr/share/alsa
+  /etc/asound.conf:
+    bind-file: $SNAP/etc/asound.conf
+
+apps:
+  music-assistant-desktop:
+    command: bin/music-assistant-desktop
+    extensions: [gnome]
+    desktop: usr/share/applications/music-assistant.desktop
+    plugs:
+      - audio-playback
+      - audio-record
+      - pipewire
+      - network
+      - network-bind
+      - network-status
+      - mpris
+      - unity7
+      - status-notifier-watcher
+      - avahi-observe
+      - x11
+      - wayland
+
+parts:
+  desktop-app:
+    plugin: nil
+    source: https://github.com/music-assistant/desktop-app.git
+    source-type: git
+    build-snaps:
+      - node/20/stable
+    build-packages:
+      - curl
+      - build-essential
+      - pkg-config
+      - libssl-dev
+      - libgtk-3-dev
+      - libwebkit2gtk-4.1-dev
+      - libayatana-appindicator3-dev
+      - librsvg2-dev
+      - libasound2-dev
+      - libsoup-3.0-dev
+    stage-packages:
+      - libasound2-data
+      - libasound2-plugins
+      - libpulse0
+    override-pull: |
+      craftctl default
+
+      # Determine version from git
+      VERSION="$(git describe --tags --always | sed 's/^v//')"
+
+      craftctl set version="$VERSION"
+    override-build: |
+      # Ensure latest stable Rust toolchain is available
+      if [ ! -f "$HOME/.cargo/bin/rustup" ]; then
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+      else
+        "$HOME/.cargo/bin/rustup" update stable
+      fi
+
+      export PATH="$HOME/.cargo/bin:$PATH"
+      [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+      # Install Node dependencies
+      npm install
+
+      # Build the Tauri application
+      npx tauri build --no-bundle
+
+      # Install the binary
+      mkdir -p "$CRAFT_PART_INSTALL/bin"
+      install -m 755 src-tauri/target/release/music-assistant-companion "$CRAFT_PART_INSTALL/bin/music-assistant-desktop"
+
+      # Create standalone asound.conf that directs ALSA straight to PulseAudio/PipeWire - still not entirely sure about this, but it works
+      mkdir -p "$CRAFT_PART_INSTALL/etc"
+      cat << 'EOF' > "$CRAFT_PART_INSTALL/etc/asound.conf"
+      pcm.!default {
+          type pulse
+          hint {
+              show on
+              description "Default Audio Output (PulseAudio/PipeWire)"
+          }
+      }
+      ctl.!default {
+          type pulse
+      }
+      EOF
+
+      # Install icon
+      mkdir -p "$CRAFT_PART_INSTALL/usr/share/icons/hicolor/128x128/apps"
+      install -m 644 app-icon.png "$CRAFT_PART_INSTALL/usr/share/icons/hicolor/128x128/apps/music-assistant.png"
+
+      # Install desktop entry
+      mkdir -p "$CRAFT_PART_INSTALL/usr/share/applications"
+      cat <<EOF > "$CRAFT_PART_INSTALL/usr/share/applications/music-assistant.desktop"
+      [Desktop Entry]
+      Name=Music Assistant
+      Comment=Companion desktop app for Music Assistant
+      Exec=music-assistant-desktop %U
+      Icon=/usr/share/icons/hicolor/128x128/apps/music-assistant.png
+      Terminal=false
+      Type=Application
+      Categories=AudioVideo;Audio;Player;
+      StartupWMClass=music-assistant-companion
+      EOF
