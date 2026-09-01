@@ -47,6 +47,7 @@ apps:
       - network-status
       - mpris
       - unity7
+      - avahi-control
       - avahi-observe
       - x11
       - wayland
