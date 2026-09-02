@@ -31,6 +31,10 @@ layout:
     bind: $SNAP/usr/share/alsa
   /etc/asound.conf:
     bind-file: $SNAP/etc/asound.conf
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/alsa-lib:
+    bind: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/alsa-lib
+  /usr/share/alsa:
+    bind: $SNAP/gnome-platform/usr/share/alsa
 
 apps:
   music-assistant-desktop:
@@ -54,6 +58,8 @@ apps:
       - wayland
       - system-observe
       - alsa
+    slots:
+      - mpris
 
 parts:
   desktop-app:
