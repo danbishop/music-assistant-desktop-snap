@@ -27,8 +27,8 @@ platforms:
   arm64:
 
 layout:
-  /usr/share/alsa:
-    bind: $SNAP/usr/share/alsa
+  #/usr/share/alsa:
+  #  bind: $SNAP/usr/share/alsa
   /etc/asound.conf:
     bind-file: $SNAP/etc/asound.conf
   /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/alsa-lib:
