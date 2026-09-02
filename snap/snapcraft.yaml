@@ -68,7 +68,7 @@ apps:
       #- alsa
     slots:
       - mpris
-    commmond-id: io.music-assistant.desktop
+    common-id: io.music-assistant.desktop
 
 parts:
   desktop-app:
