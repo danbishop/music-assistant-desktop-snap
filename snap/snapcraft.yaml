@@ -58,7 +58,7 @@ apps:
       - network-bind
       - network-status
       #- network-control
-      - mpris
+      #- mpris
       - unity7
       - avahi-control
       - avahi-observe
