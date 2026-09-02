@@ -39,7 +39,7 @@ layout:
 slots:
       mpris:
         name: music-assistant-desktop
-      g4music:
+      music-assistant-desktop:
         interface: dbus
         bus: session
         name: io.music-assistant.desktop
