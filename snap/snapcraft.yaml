@@ -36,6 +36,14 @@ layout:
   /usr/share/alsa:
     bind: $SNAP/gnome-platform/usr/share/alsa
 
+slots:
+      mpris:
+        name: music-assistant-desktop
+      g4music:
+        interface: dbus
+        bus: session
+        name: io.music-assistant.desktop
+
 apps:
   music-assistant-desktop:
     command: bin/music-assistant-desktop
@@ -49,7 +57,7 @@ apps:
       - network
       - network-bind
       - network-status
-      - network-control
+      #- network-control
       - mpris
       - unity7
       - avahi-control
@@ -57,9 +65,10 @@ apps:
       - x11
       - wayland
       - system-observe
-      - alsa
+      #- alsa
     slots:
       - mpris
+    commmond-id: io.music-assistant.desktop
 
 parts:
   desktop-app:
