@@ -57,15 +57,11 @@ apps:
       - network
       - network-bind
       - network-status
-      #- network-control
-      #- mpris
       - unity7
-      - avahi-control
       - avahi-observe
       - x11
       - wayland
       - system-observe
-      #- alsa
     slots:
       - mpris
     common-id: io.music-assistant.desktop
