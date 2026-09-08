@@ -61,7 +61,7 @@ apps:
       - avahi-observe
       - x11
       - wayland
-      - system-observe
+      # - system-observe
     slots:
       - mpris
     common-id: io.music-assistant.desktop
