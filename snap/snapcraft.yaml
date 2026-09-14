@@ -42,7 +42,7 @@ slots:
       music-assistant-desktop:
         interface: dbus
         bus: session
-        name: io.music_assistant.desktop
+        name: io.music-assistant.desktop
 
 apps:
   music-assistant-desktop:
@@ -64,7 +64,7 @@ apps:
       # - system-observe
     slots:
       - mpris
-    common-id: io.music_assistant.desktop
+    common-id: io.music-assistant.desktop
 
 parts:
   desktop-app:
