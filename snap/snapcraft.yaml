@@ -83,10 +83,6 @@ parts:
       - librsvg2-dev
       - libasound2-dev
       - libsoup-3.0-dev
-      - libpango1.0-dev
-      - libglib2.0-dev
-      - libsecret-1-dev
-      - libwebkit2gtk-4.1-dev
     stage-packages:
       - libasound2-data
       - libasound2-plugins
