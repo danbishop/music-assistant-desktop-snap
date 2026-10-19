@@ -38,11 +38,11 @@ layout:
 
 slots:
       mpris:
-        name: music-assistant-desktop
+        name: io_music_assistant_companion
       music-assistant-desktop:
         interface: dbus
         bus: session
-        name: io.music-assistant.desktop
+        name: org.mpris.MediaPlayer2.io_music_assistant_companion
 
 apps:
   music-assistant-desktop:
