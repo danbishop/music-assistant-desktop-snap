@@ -79,6 +79,7 @@ parts:
       - librsvg2-dev
       - libasound2-dev
       - libsoup-3.0-dev
+      - jq
     stage-packages:
       - libasound2-data
       - libasound2-plugins
@@ -93,6 +94,13 @@ parts:
       git checkout $VERSION
 
       craftctl set version="$VERSION"
+
+      # Set the version number in config files
+      # Update package.json using jq
+      jq --arg ver "$VERSION" '.version = $ver' package.json > tmp.json && mv tmp.json package.json
+      # Update tauri.conf.json using jq
+      jq --arg ver "$VERSION" '.version = $ver' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
+
     override-build: |
       # Ensure latest stable Rust toolchain is available
       if [ ! -f "$HOME/.cargo/bin/rustup" ]; then
@@ -106,14 +114,7 @@ parts:
 
       # Install Node dependencies
       npm install
-      
-      # Set the version number
-      VERSION="$(git describe --tags --abbrev=0)"
-      # Update package.json using jq
-      jq --arg ver "$VERSION" '.version = $ver' package.json > tmp.json && mv tmp.json package.json
-      # Update tauri.conf.json using jq
-      jq --arg ver "$VERSION" '.version = $ver' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
-
+    
       # Build the Tauri application
       npx tauri build --no-bundle
 
