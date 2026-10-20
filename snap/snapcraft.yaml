@@ -37,12 +37,8 @@ layout:
     bind: $SNAP/gnome-platform/usr/share/alsa
 
 slots:
-      mpris:
-        name: io_music_assistant_companion
-      music-assistant-desktop:
-        interface: dbus
-        bus: session
-        name: org.mpris.MediaPlayer2.io_music_assistant_companion
+  mpris:
+    name: io_music_assistant_companion
 
 apps:
   music-assistant-desktop:
@@ -91,7 +87,7 @@ parts:
       craftctl default
 
       # Determine version from git
-      VERSION="$(git describe --tags --always | sed 's/^v//')"
+      VERSION="$(git describe --tags --abbrev=0)"
 
       # Switch the source code to that tag
       git checkout $VERSION
@@ -110,6 +106,13 @@ parts:
 
       # Install Node dependencies
       npm install
+      
+      # Set the version number
+      VERSION="$(git describe --tags --abbrev=0)"
+      # Update package.json using jq
+      jq --arg ver "$VERSION" '.version = $ver' package.json > tmp.json && mv tmp.json package.json
+      # Update tauri.conf.json using jq
+      jq --arg ver "$VERSION" '.version = $ver' src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
 
       # Build the Tauri application
       npx tauri build --no-bundle
